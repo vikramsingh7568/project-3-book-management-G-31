@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Schema.Types.ObjectId
+const moment = require('moment')
 
 const bookSchema = new mongoose.Schema({
     title: {
@@ -27,7 +28,8 @@ const bookSchema = new mongoose.Schema({
     },
     subcategory: {
         type: [String],
-        required: true},
+        required: true
+    },
     reviews: {
        type: Number, 
        default: 0, 

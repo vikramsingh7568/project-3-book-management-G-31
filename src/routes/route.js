@@ -18,7 +18,7 @@ const bookController= require("../controllers/bookController.js")        // BOOK
 
 // ---------------------------|| BOOK ||--------------------------------
 
-router.post("/books",middleware.authentication,bookController.createBooks)
+router.post("/books",bookController.createBooks)   //middleware.authentication,
 router.get("/books",bookController.getBooks)
 router.get("/books/:bookId",bookController.getBookByparam )
 router.put("/books/:bookId",bookController.updateBook)
