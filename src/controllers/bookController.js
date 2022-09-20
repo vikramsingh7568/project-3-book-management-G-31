@@ -1,6 +1,18 @@
-//const { takeCoverage } = require("v8")
+
 const bookModel = require("../models/bookModel.js")
 const userModel = require("../models/userModel.js")
+
+
+const isValid = function (value) {
+    if (typeof value === 'undefined' || value === null) return false
+    if (typeof value === 'string' && value.trim().length === 0) return false
+    return true
+}
+
+const isVAlidRequestBody = function(requestBody){
+    return Object.keys(requestBody).length > 0
+}
+
 //--------------------------|| CREATE BOOKS ||--------------------------------
 
 const createBooks = async function(req,res){
