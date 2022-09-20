@@ -7,6 +7,10 @@ const bookController= require("../controllers/bookController.js")        // BOOK
  const reviewController=require("../controllers/reviewController.js")    // REVIEW CONTROLLER
  const userController=require("../controllers/userController.js")        // USER CONTROLLER
 
+//----------------------------|| middleware ||-------------------------
+
+   const middleware = require("../middleware/middleware.js")
+
 // ---------------------------|| USER ||--------------------------------
 
  router.post("/register",userController.createUser)
@@ -14,7 +18,7 @@ const bookController= require("../controllers/bookController.js")        // BOOK
 
 // ---------------------------|| BOOK ||--------------------------------
 
-router.post("/books",bookController.createBooks)
+router.post("/books",middleware.authentication,bookController.createBooks)
 router.get("/books",bookController.getBooks)
 router.get("/books/:bookId",bookController.getBookByparam )
 router.put("/books/:bookId",bookController.updateBook)
@@ -27,5 +31,14 @@ router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
 router.delete("/books/:bookId/review/:reviewId",reviewController.deleteReview)
 
 // -----------------------------------------------------------------------
+
+
+router.all("/*", function (req, res) {
+    res.status(404).send({
+        status: false,
+        message: "Make Sure Your Endpoint is Correct !!!"
+    })
+})
+
 
 module.exports = router;
