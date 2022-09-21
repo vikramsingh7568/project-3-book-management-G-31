@@ -94,16 +94,21 @@ Also make sure in the response you return the updated book document.
 
 
 DELETE /books/:bookId
+
 Check if the bookId exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
 If the book document doesn't exist then return an HTTP status of 404 with a body like this
+
 Review APIs
+
 POST /books/:bookId/review
 Add a review for the book in reviews collection.
 Check if the bookId exists and is not deleted before adding the review. Send an error response with appropirate status code like this if the book does not exist
 Get review details like review, rating, reviewer's name in request body.
 Update the related book document by increasing its review count
 Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like this
+
 PUT /books/:bookId/review/:reviewId
+
 Update the review - review, rating, reviewer's name.
 Check if the bookId exists and is not deleted before updating the review. Check if the review exist before updating the review. Send an error response with appropirate status code like this if the book does not exist
 Get review details like review, rating, reviewer's name in request body.
