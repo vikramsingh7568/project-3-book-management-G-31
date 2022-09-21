@@ -191,7 +191,7 @@ const updateBook = async function(req,res){
         
         let findbookId = await bookModel.findById(bookId)
         if(!findbookId) {
-        return res.send({status: false, msg: "book Id is not valid"})
+        return res.send({status: false, msg: "bookId doesn't exists"})
         }
 
         let updatedata = req.body;
@@ -235,7 +235,34 @@ const updateBook = async function(req,res){
 //--------------------------|| DELETE BOOKS ||--------------------------------
 
 const deleteBook = async function(req,res){
+    try {
+        let bookId = req.params.bookId
+
+        if (!bookId) {
+            return res.status(400).send({ status: false, message: "please provide a bookId in params" })
+        };
+
+        if(!isValidObjectId(bookId)){
+            return res.status(400).send({status: false, msg: `${bookId} is not valid book Id`})
+        }
+
+        let findbookId = await bookModel.findById(bookId)
+        if(!findbookId) {
+        return res.status(404).send({status: false, msg: "bookId doesn't exists"})
+        }
+
+        const checkBookId = await bookModel.findOne({ _id: bookId, isDeleted: false})
+
+        if (!checkBookId) {
+          return res.status(404).send({ status: false, message: "no book found"})}
     
+       let deletedBook= await bookModel.findByIdAndUpdate({ _id: bookId },{ $set: { isDeleted: true} },{ new: true });
+    
+       return res.status(200).send({ status: true, message: "book sucessfully deleted",deletedBook});
+
+    } catch (error) {
+        return res.status(500).send(error.message)
+    }
 }
 
 //--------------------------|| EXPORTING MODULE TO ROUTE.JS ||--------------------------------
