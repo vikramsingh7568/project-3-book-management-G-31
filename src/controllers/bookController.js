@@ -2,7 +2,7 @@
 const bookModel = require("../models/bookModel.js")
 const userModel = require("../models/userModel.js")
 const reviewModel = require("../models/reviewModel")
-
+const moment = require('moment')
 const mongoose = require("mongoose");
 
 
@@ -31,8 +31,9 @@ const createBooks = async function(req,res){
             return res.status(400).send({status: false, msg: "please input Book Details"})
         }
 
-        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt , isDeleted} = requestbody
-
+        const { title, excerpt, userId, ISBN, category, subcategory, isDeleted} = requestbody
+        let releasedAt = requestbody.releasedAt 
+         releasedAt = moment(new Date()).format("YYYY"-"MM"-"DD")
            
         let IsbnNumber = /^[7-9][0-9]+$/.test(ISBN)
         if (IsbnNumber == false) {
@@ -92,8 +93,8 @@ const createBooks = async function(req,res){
             return res.status(400).send({ status: false, msg: ' releasedAt is required' })
         }
 
-       // let createBookData = await bookModel.create(requestbody)
-        return res.status(201).send({status: true, msg:"successfully created"})
+        let createBookData = await bookModel.create(requestbody)
+        return res.status(201).send({status: true, msg:"successfully created" , data : createBookData})
     } catch (error) {
         return res.status(500).send(error.message)
     }
