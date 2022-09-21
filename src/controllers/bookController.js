@@ -193,7 +193,7 @@ const updateBook = async function(req,res){
         
         let findbookId = await bookModel.findById(bookId)
         if(!findbookId) {
-        return res.send({status: false, msg: "bookId doesn't exists"})
+        return res.status(404).send({status: false, msg: "bookId doesn't exists"})
         }
 
         let updatedata = req.body;
@@ -206,17 +206,17 @@ const updateBook = async function(req,res){
 
         let checkTitle = await bookModel.findOne({title:title})
         if(checkTitle) {
-        return res.send({status: false, msg: "title must be unique"})
+        return res.status(400).send({status: false, msg: "title must be unique"})
         }
 
         let checkISBN = await bookModel.findOne({ISBN:ISBN})
         if(checkISBN) {
-        return res.send({status: false, msg: "ISBN must be unique"})
+        return res.status(400).send({status: false, msg: "ISBN must be unique"})
         }
 
         let availabId = await bookModel.findOne({ _id: bookId, isDeleted: false });
         if(!availabId){
-            return res.send({status: false, msg: "blogId no present in db"})
+            return res.status(404).send({status: false, msg: "bookId is not present in db"})
         }
 
         let bookupdate = await bookModel.findOneAndUpdate(

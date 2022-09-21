@@ -14,15 +14,15 @@ const bookController= require("../controllers/bookController.js")        // BOOK
 // ---------------------------|| USER ||--------------------------------
 
  router.post("/register",userController.createUser)
- router.post("/login",userController.loginUser)
+ router.post("/login",userController.loginUser) 
 
 // ---------------------------|| BOOK ||--------------------------------
 
-router.post("/books",bookController.createBooks)   //middleware.authentication,
-router.get("/books",bookController.getBooks)
-router.get("/books/:bookId",bookController.getBookByparam )
-router.put("/books/:bookId",bookController.updateBook)
-router.delete("/books/:bookId",bookController.deleteBook)
+router.post("/books",middleware.authentication,bookController.createBooks)   
+router.get("/books",middleware.authentication,bookController.getBooks)
+router.get("/books/:bookId",middleware.authentication,bookController.getBookByparam )
+router.put("/books/:bookId",middleware.authentication,bookController.updateBook)
+router.delete("/books/:bookId",middleware.authentication,bookController.deleteBook)
 
 // ------------------ ---------|| REVIEW ||--------------------------------
 
