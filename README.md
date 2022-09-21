@@ -53,6 +53,7 @@ Create a user document from request body.
 Return HTTP status 201 on a succesful user creation. Also return the user document. The response should be a JSON object like this
 Return HTTP status 400 if no params or invalid params received in request body. The response should be a JSON object like this
 POST /login
+
 Allow an user to login with their email and password.
 On a successful login attempt return a JWT token contatining the userId, exp, iat. The response should be a JSON object like this
 If the credentials are incorrect return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
@@ -77,7 +78,10 @@ Returns a book with complete details including reviews. Reviews array would be i
 Return the HTTP status 200 if any documents are found. The response structure should be like this
 If the book has no reviews then the response body should include book detail as shown here and an empty array for reviewsData.
 If no documents are found then return an HTTP status 404 with a response like this
-PUT /books/:bookId
+
+------------------PUT /books/:bookId---------------------
+
+
 Update a book by changing its
 title
 excerpt
@@ -87,6 +91,8 @@ Make sure the unique constraints are not violated when making the update
 Check if the bookId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like this
 Return an HTTP status 200 if updated successfully with a body like this
 Also make sure in the response you return the updated book document.
+
+
 DELETE /books/:bookId
 Check if the bookId exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
 If the book document doesn't exist then return an HTTP status of 404 with a body like this

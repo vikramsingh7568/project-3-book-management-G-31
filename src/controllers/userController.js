@@ -81,8 +81,8 @@ const createUser = async function(req,res){
             return res.status(400).send({ status: false, msg: 'the length of password must be min:- 8 or max: 15' })
         }
 
-        //let userdata=await userModel.create(data)
-        return res.status(201).send({status:true, msg: "data succesfully created"})
+        let userdata=await userModel.create(data)
+        return res.status(201).send({status:true, msg: "data succesfully created",data: userdata})
     } else{
         return res.status(400).send({ status: false, msg: ' title is only contain Mr, Mrs, Miss' })
     }
