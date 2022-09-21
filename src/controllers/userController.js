@@ -82,7 +82,9 @@ const createUser = async function(req,res){
         }
 
         let userdata=await userModel.create(data)
-        return res.status(201).send({status:true, msg: "data succesfully created",data: userdata})
+
+        return res.status(201).send({status:true, msg: "data succesfully created", data : userdata})
+
     } else{
         return res.status(400).send({ status: false, msg: ' title is only contain Mr, Mrs, Miss' })
     }
@@ -128,7 +130,7 @@ const loginUser = async function(req,res){
         },
         "Book-Management",{
 
-          expiresIn: '1M' // expires in 1m hours
+          expiresIn: '1M' // expires in 1m minits
 
            });
    return res.status(201).send({ status: true, message: token })

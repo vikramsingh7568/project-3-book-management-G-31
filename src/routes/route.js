@@ -24,7 +24,7 @@ router.get("/books/:bookId",bookController.getBookByparam )
 router.put("/books/:bookId",bookController.updateBook)
 router.delete("/books/:bookId",bookController.deleteBook)
 
-// ---------------------------|| REVIEW ||--------------------------------
+// ------------------ ---------|| REVIEW ||--------------------------------
 
 router.post("/books/:bookId/review",reviewController.createReview)
 router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
