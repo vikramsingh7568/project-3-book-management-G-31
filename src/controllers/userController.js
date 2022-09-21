@@ -128,7 +128,7 @@ const loginUser = async function(req,res){
         },
         "Book-Management",{
 
-          expiresIn: '1M' // expires in 1m hours
+          expiresIn: '1M' // expires in 1m minits
 
            });
    return res.status(201).send({ status: true, message: token })
