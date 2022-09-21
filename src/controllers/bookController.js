@@ -18,12 +18,28 @@ const isVAlidRequestBody = function(requestBody){
 const createBooks = async function(req,res){
     try {
         let requestbody = req.body
-
         if(!isVAlidRequestBody(requestbody)){
             return res.status(400).send({status: false, msg: "please input Book Details"})
         }
 
-        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt} = requestbody
+        const { title, excerpt, userId, ISBN, category, subcategory, releasedAt , isDeleted} = requestbody
+
+           
+        let IsbnNumber = /^[7-9][0-9]+$/.test(ISBN)
+        if (IsbnNumber == false) {
+            return res.status(400).send({ status: false, msg: 'please enter a valid ISBN Number' })
+        }
+         
+        if (ISBN.length < 13 || ISBN.length > 13) {
+            return res.status(400).send({ status: false, msg: "IsbnNumber should be 13 digit" })
+        }
+
+        if (isDeleted) {
+            if (isDeleted != "false") {
+                return res.status(400).send({ status: false, msg: "isDeleted is only take boolean value false" })
+            }
+        }
+
 
         if (!isValid(title)) {
             return res.status(400).send({ status: false, msg: ' title is required' })
@@ -67,8 +83,8 @@ const createBooks = async function(req,res){
             return res.status(400).send({ status: false, msg: ' releasedAt is required' })
         }
 
-        let createBookData = await bookModel.create(requestbody)
-        return res.status(201).send({status: true, msg:"successfully created", createBookData})
+       // let createBookData = await bookModel.create(requestbody)
+        return res.status(201).send({status: true, msg:"successfully created"})
     } catch (error) {
         return res.status(500).send(error.message)
     }
@@ -81,27 +97,12 @@ const getBooks = async function(req,res){
         let requestBody = req.query
         let {userId, category, subcategory} = requestBody
 
-        // if(subcategory){
-        //    if(!subcategory){
-        //     res.send("fill subcategory")
-        //    } 
-        // }
-        
-        // if(!subcategory || subcategory.length ==0){
-        //     res.send('fill subcat.')
-        // } 
-
-        if (!Object.values(requestBody).length === 0) {
-            return res.status(400).send({ status: false, message: "Please give some parameters to check" })
-       }
-
-
         let getBooksDetails = await bookModel.find({isDeleted: false, ...requestBody}).select({title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews:1})
                        
         if(getBooksDetails.length == 0){
             return res.status(404).send({status: false, msg: 'no book found'})
         } else {
-            return res.status(200).send({status: true, msg:"get data successfully", getBooksDetails})
+            return res.status(200).send({status: true, msg:"get data successfully", data :getBooksDetails})
         }
          
 
