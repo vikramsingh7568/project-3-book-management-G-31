@@ -77,9 +77,38 @@ const createBooks = async function(req,res){
 //--------------------------|| GET BOOKS ||--------------------------------
 
 const getBooks = async function(req,res){
-    
-}
+    try {
+        let requestBody = req.query
+        let {userId, category, subcategory} = requestBody
 
+        // if(subcategory){
+        //    if(!subcategory){
+        //     res.send("fill subcategory")
+        //    } 
+        // }
+        
+        // if(!subcategory || subcategory.length ==0){
+        //     res.send('fill subcat.')
+        // } 
+
+        if (!Object.values(requestBody).length === 0) {
+            return res.status(400).send({ status: false, message: "Please give some parameters to check" })
+       }
+
+
+        let getBooksDetails = await bookModel.find({isDeleted: false, ...requestBody}).select({title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews:1})
+                       
+        if(getBooksDetails.length == 0){
+            return res.status(404).send({status: false, msg: 'no book found'})
+        } else {
+            return res.status(200).send({status: true, msg:"get data successfully", getBooksDetails})
+        }
+         
+
+    } catch (error) {
+        return res.status(500).send({status:false, msg:error.message})
+    }
+}
 //--------------------------|| GET BOOKS BY PARAMS ||--------------------------------
 
 const getBookByparam = async function(req,res){
