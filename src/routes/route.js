@@ -21,14 +21,14 @@ const bookController= require("../controllers/bookController.js")        // BOOK
 router.post("/books",middleware.authentication,bookController.createBooks)   
 router.get("/books",middleware.authentication,bookController.getBooks)
 router.get("/books/:bookId",middleware.authentication,bookController.getBookByparam )
-router.put("/books/:bookId",middleware.authentication,bookController.updateBook)
-router.delete("/books/:bookId",middleware.authentication,bookController.deleteBook)
+router.put("/books/:bookId",middleware.authentication,middleware.Authorisation,bookController.updateBook)
+router.delete("/books/:bookId",middleware.authentication,middleware.Authorisation,bookController.deleteBook)
 
 // ------------------ ---------|| REVIEW ||--------------------------------
 
-router.post("/books/:bookId/review",reviewController.createReview)
-router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
-router.delete("/books/:bookId/review/:reviewId",reviewController.deleteReview)
+router.post("/books/:bookId/review",middleware.authentication,middleware.Authorisation,reviewController.createReview)
+router.put("/books/:bookId/review/:reviewId",middleware.authentication,middleware.Authorisation,reviewController.updateReview)
+router.delete("/books/:bookId/review/:reviewId",middleware.authentication,middleware.Authorisation,reviewController.deleteReview)
 
 // -----------------------------------------------------------------------
 

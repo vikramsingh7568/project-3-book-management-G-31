@@ -144,19 +144,19 @@ const getBookByparam = async function(req,res){
         let reviewFind = await reviewModel.find({
             bookId:bookId
         })
-        let bookData2 ={
-            data : bookData,
-            reviewsData : reviewFind
-        }
-        let  Data = {
-            name : specificData.name,
-            fullName : specificData.fullName,
-            logoLink : specificData.logoLink,
-            interns  : specificData2
-          }
+        // let bookData2 ={
+        //     data : bookData,
+        //     reviewsData : reviewFind
+        // }
+        // let  Data = {
+        //     name : specificData.name,
+        //     fullName : specificData.fullName,
+        //     logoLink : specificData.logoLink,
+        //     interns  : specificData2
+        //   }
     
         
-        return res.status(200).send({status:true,message: 'Books list',data : bookData2 })
+        return res.status(200).send({status:true,message: 'Books list',data : bookData , review : reviewFind })
 
     }catch(err){
        return res.status(500).send(err.message)
