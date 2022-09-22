@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bookModel = require('../models/bookModel');
 
 
 //AUTHENTICATION
@@ -20,6 +21,28 @@ const authentication = async function (req, res, next) {
     }
 }
 
+//---------Authorisation----------------------------------------------------------------------------
+
+    const Authorisation = async function (req, res, next){
+      try{
+         let book = req.params.bookId
+
+         let CheckingBook = await bookModel.findOne({_id : book}) 
+         if(!CheckingBook){
+            return res.status(404).send({status : false , message : "this book is not found"})
+         }
+         if(CheckingBook.userId != req.decode.userId)
+         {
+            return res.status(403).send({status : false , message : "you are not Authorized person"})
+         }
+         else{
+            next()
+         }
+    }catch(error){
+     return res.status(500).send({status : false , message : error.message})
+    }
+    }
 
 
-module.exports = { authentication}
+
+module.exports = { authentication,Authorisation}

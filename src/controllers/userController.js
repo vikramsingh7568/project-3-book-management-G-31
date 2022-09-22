@@ -130,7 +130,7 @@ const loginUser = async function(req,res){
         },
         "Book-Management",{
 
-          expiresIn: '1M' // expires in 1m minits
+          expiresIn: '30M' // expires in 1m minits
 
            });
    return res.status(201).send({ status: true, message: token })
