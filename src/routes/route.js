@@ -18,8 +18,8 @@ const bookController= require("../controllers/bookController.js")        // BOOK
 
 // ---------------------------|| BOOK ||--------------------------------
 
-router.post("/books",middleware.authentication,bookController.createBooks)   
-router.get("/books",middleware.authentication,bookController.getBooks)
+router.post("/books",bookController.createBooks)   
+router.get("/books",bookController.getBooks)
 router.get("/books/:bookId",middleware.authentication,bookController.getBookByparam )
 router.put("/books/:bookId",middleware.authentication,bookController.updateBook)
 router.delete("/books/:bookId",middleware.authentication,bookController.deleteBook)

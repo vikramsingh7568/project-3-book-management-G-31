@@ -2,7 +2,6 @@
 const bookModel = require("../models/bookModel.js")
 const userModel = require("../models/userModel.js")
 const reviewModel = require("../models/reviewModel")
-
 const mongoose = require("mongoose");
 
 
@@ -66,6 +65,7 @@ const createBooks = async function(req,res){
         if (!isValid(userId)) {
             return res.status(400).send({ status: false, msg: ' userId is required' })
         }
+
         let findUserId = await userModel.findById(userId)
         if(!findUserId) {
         return res.send({status: false, msg: "user Id is not valid"})
@@ -92,8 +92,8 @@ const createBooks = async function(req,res){
             return res.status(400).send({ status: false, msg: ' releasedAt is required' })
         }
 
-       // let createBookData = await bookModel.create(requestbody)
-        return res.status(201).send({status: true, msg:"successfully created"})
+       let createBookData = await bookModel.create(requestbody)
+        return res.status(201).send({status: true, msg:"successfully created",data: createBookData})
     } catch (error) {
         return res.status(500).send(error.message)
     }
@@ -105,6 +105,10 @@ const getBooks = async function(req,res){
     try {
         let requestBody = req.query
         let {userId, category, subcategory} = requestBody
+
+        if(!isValidObjectId(userId)){
+            return res.status(400).send({status: false, msg: `${userId} is not valid user Id`})
+         }
 
         let getBooksDetails = await bookModel.find({isDeleted: false, ...requestBody}).select({title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews:1})
                        
