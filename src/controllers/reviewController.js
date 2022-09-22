@@ -67,16 +67,12 @@ const createReview = async function(req,res){
             if (!isValid(rating)) {
                 return res.status(400).send({ status: false, msg: ' rating is required' })
             }
-    
-            
-    
-        let createReview = await reviewModel.create(requestBody)    
+       
+            let createReview = await reviewModel.create(requestBody)    
     
             await bookModel.findOneAndUpdate({_id: params},{$inc:{reviews:1}},{new: true})
-        
-              return res.status(200).send({ status: true, message: "success", createReview});
-    
-    
+                return res.status(200).send({ status: true, message: "success", createReview});
+      
     } catch (error) {
         return res.status(500).send({status:false, msg:"error", error:error.message})  
     }
@@ -98,7 +94,7 @@ const updateReview = async function(req,res){
         
         let findbookId = await bookModel.findById({_id:bookId, isDeleted: false})
         if(!findbookId) {
-        return res.status(404).send({status: false, msg: "bookId doesn't exists"})
+            return res.status(404).send({status: false, msg: "bookId doesn't exists"})
         }
 
         let reviewId = req.params.reviewId;
@@ -113,7 +109,7 @@ const updateReview = async function(req,res){
         
         let findreviewId = await reviewModel.findById({ _id: reviewId, isDeleted:false})
         if(!findreviewId) {
-        return res.status(404).send({status: false, msg: "reviewId doesn't exists"})
+            return res.status(404).send({status: false, msg: "reviewId doesn't exists"})
         }
         
         let updatereviewdata = req.body;
@@ -124,13 +120,8 @@ const updateReview = async function(req,res){
             return res.status(400).send({status: false, msg: "please input review Details"})
         };
 
-        
-
-        let reviewupdate = await reviewModel.findOneAndUpdate(
-            { bookId:bookId, _id: reviewId, isDeleted:false },
-            { $set: { review, rating, reviewedBy} },
-            { new: true }
-        );
+        let reviewupdate = await reviewModel.findOneAndUpdate({ bookId:bookId, _id: reviewId, isDeleted:false },
+            { $set: { review, rating, reviewedBy} },{ new: true });
 
         res.status(200).send({ status: true, message: 'Success', data: reviewupdate });
       
@@ -157,11 +148,9 @@ const deleteReview = async function(req,res){
         
         let findbookId = await bookModel.findById({_id:bookIdparam, isDeleted: false})
         if(!findbookId) {
-        return res.status(404).send({status: false, msg: "bookId doesn't exists"})
+            return res.status(404).send({status: false, msg: "bookId doesn't exists"})
         }
-        
-        
-        
+                
         if (!reviewIdparam) {
             return res.status(400).send({ status: false, message: "please provide a reviewId in params" })
         };
@@ -172,19 +161,14 @@ const deleteReview = async function(req,res){
         
         let findreviewId = await reviewModel.findById({ _id: reviewIdparam, isDeleted:false})
         if(!findreviewId) {
-        return res.status(404).send({status: false, msg: "reviewId doesn't exists"})
+            return res.status(404).send({status: false, msg: "reviewId doesn't exists"})
         }
 
-        let deletedReview = await reviewModel.findByIdAndUpdate(
-            { bookId:bookIdparam, _id: reviewIdparam, isDeleted:false },
-         
-             { $set: { isDeleted: true } }, 
-             { new: true });
+        let deletedReview = await reviewModel.findByIdAndUpdate({ bookId:bookIdparam, _id: reviewIdparam, isDeleted:false },
+            { $set: { isDeleted: true } },{ new: true });
 
         await bookModel.findOneAndUpdate({_id: bookIdparam},{$inc:{reviews:-1}},{new: true})
-
-
-        return res.status(200).send({ status: true, message: "review sucessfully deleted", deletedReview });
+            return res.status(200).send({ status: true, message: "review sucessfully deleted", deletedReview });
 
     }catch(err){
         return res.status(500).send(err.message)
