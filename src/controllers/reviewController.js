@@ -21,7 +21,65 @@ const isValidObjectId = function(objectId){
 //--------------------------|| CREATE REVIEW ||--------------------------------
 
 const createReview = async function(req,res){
-
+    try {
+        let params = req.params.bookId
+        
+        let requestBody = req.body
+    
+            if(!isVAlidRequestBody(requestBody)){
+                return res.status(400).send({status: false, msg: "please input review Details"})
+            }
+    
+            if (!params) {
+                return res.status(400).send({ status: false, message: "please provide a bookId in params" })
+            };
+    
+            if(!isValidObjectId(params)){
+                return res.status(400).send({status: false, msg: `${params} is not valid book Id`})
+            }
+    
+            let findbookId = await bookModel.findById(params)
+            
+            if(!findbookId) {
+            return res.status(404).send({status: false, msg: "bookId doesn't exists"})
+            }
+    
+            const checkBookId = await bookModel.findOne({ _id: params, isDeleted: false})
+    
+            if (!checkBookId) {
+              return res.status(404).send({ status: false, message: "this book is deleted"})
+            }
+    
+            const {bookId, reviewedBy, reviewedAt, rating } = requestBody
+    
+            if (!isValid(bookId)) {
+                return res.status(400).send({ status: false, msg: ' bookId is required' })
+            }
+    
+            if (!isValid(reviewedBy)) {
+                return res.status(400).send({ status: false, msg: ' reviewedBy is required' })
+            }
+    
+            if (!isValid(reviewedAt)) {
+                return res.status(400).send({ status: false, msg: ' reviewedAt is required' })
+            }
+    
+            if (!isValid(rating)) {
+                return res.status(400).send({ status: false, msg: ' rating is required' })
+            }
+    
+            
+    
+        let createReview = await reviewModel.create(requestBody)    
+    
+            await bookModel.findOneAndUpdate({_id: params},{$inc:{reviews:1}},{new: true})
+        
+              return res.status(200).send({ status: true, message: "success", createReview});
+    
+    
+    } catch (error) {
+        return res.status(500).send({status:false, msg:"error", error:error.message})  
+    }
 }
 
 //--------------------------|| UPDATE REVIEW ||--------------------------------
