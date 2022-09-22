@@ -114,14 +114,14 @@ const updateReview = async function(req,res){
         
         let updatereviewdata = req.body;
 
-        let { review, rating, reviewedBy} = updatereviewdata;
+        let { reviews, rating, reviewedBy} = updatereviewdata;
 
         if(!isVAlidRequestBody(updatereviewdata)){
             return res.status(400).send({status: false, msg: "please input review Details"})
         };
 
         let reviewupdate = await reviewModel.findOneAndUpdate({ bookId:bookId, _id: reviewId, isDeleted:false },
-            { $set: { review, rating, reviewedBy} },{ new: true });
+            { $set: { reviews, rating, reviewedBy} },{ new: true });
 
         res.status(200).send({ status: true, message: 'Success', data: reviewupdate });
       
