@@ -27,6 +27,7 @@ const isValidObjectId = function (objectId) {
 const createBooks = async function (req, res) {
     try {
         let requestbody = req.body
+
         if (!isVAlidRequestBody(requestbody)) {
             return res.status(400).send({ status: false, msg: "please input Book Details" })
         }
@@ -110,18 +111,14 @@ const createBooks = async function (req, res) {
 
 const getBooks = async function (req, res) {
     try {
-        let requestBody = req.query
-        let { userId, category, subcategory } = requestBody
-
-        if (!isValidObjectId(userId)) {
-            return res.status(400).send({ status: false, msg: `${userId} is not valid user Id` })
-        }
+        
+        let requestBody =req.query
 
         let getBooksDetails = await bookModel.find({ isDeleted: false, ...requestBody }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
 
         if (getBooksDetails.length == 0) {
             return res.status(404).send({ status: false, msg: 'no book found' })
-        } else {
+        }else {
             return res.status(200).send({ status: true, msg: "get data successfully", data: getBooksDetails })
         }
 
@@ -150,7 +147,6 @@ const getBookByparam = async function (req, res) {
         let bookData = await bookModel.findOne({ _id: bookId})
 
         let reviewFind = await reviewModel.find({bookId: bookId}).select({bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1})
-        console.log(reviewFind)
          let bookData2 ={
             data : bookData,
             reviewsData : reviewFind

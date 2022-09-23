@@ -50,14 +50,10 @@ const createReview = async function(req,res){
               return res.status(404).send({ status: false, message: "this book is deleted"})
             }
     
-            const {bookId, reviewedBy, reviewedAt, rating } = requestBody
+            const {bookId, reviewedAt, rating } = requestBody
     
             if (!isValid(bookId)) {
                 return res.status(400).send({ status: false, msg: ' bookId is required' })
-            }
-    
-            if (!isValid(reviewedBy)) {
-                return res.status(400).send({ status: false, msg: ' reviewedBy is required' })
             }
     
             if (!isValid(reviewedAt)) {
@@ -67,11 +63,15 @@ const createReview = async function(req,res){
             if (!isValid(rating)) {
                 return res.status(400).send({ status: false, msg: ' rating is required' })
             }
+
+            if (rating < 1 || rating > 5) {
+                return res.status(400).send({ status: false, msg: "rating should be between 1 to 5" })
+            }
        
             let createReview = await reviewModel.create(requestBody)    
     
             await bookModel.findOneAndUpdate({_id: params},{$inc:{reviews:1}},{new: true})
-                return res.status(200).send({ status: true, message: "success", createReview});
+                return res.status(200).send({ status: true, message: "success",createReview });
       
     } catch (error) {
         return res.status(500).send({status:false, msg:"error", error:error.message})  
