@@ -68,6 +68,10 @@ const createBooks = async function (req, res) {
             return res.status(400).send({ status: false, msg: ' userId is required' })
         }
 
+        if(!isValidObjectId(userId)){
+            return res.status(400).send({status: false, msg: `${userId} is not valid book Id`})
+        }
+
         let findUserId = await userModel.findById(userId)
         if (!findUserId) {
             return res.send({ status: false, msg: "user Id is not valid" })
@@ -94,11 +98,8 @@ const createBooks = async function (req, res) {
             return res.status(400).send({ status: false, msg: ' releasedAt is required' })
         }
 
-
         let createBookData = await bookModel.create(requestbody)
-        return res.status(201).send({ status: true, msg: "successfully created", data: createBookData })
-
-
+            return res.status(201).send({ status: true, msg: "successfully created", data: createBookData })
 
     } catch (error) {
         return res.status(500).send(error.message)
@@ -146,26 +147,16 @@ const getBookByparam = async function (req, res) {
         if (!findbookId) {
             return res.send({ status: false, msg: "book Id is not valid" })
         }
-        let bookData = await bookModel.findOne({
-            _id: bookId
-        })
+        let bookData = await bookModel.findOne({ _id: bookId})
 
-        let reviewFind = await reviewModel.find({
-            bookId: bookId
-        })
-        // let bookData2 ={
-        //     data : bookData,
-        //     reviewsData : reviewFind
-        // }
-        // let  Data = {
-        //     name : specificData.name,
-        //     fullName : specificData.fullName,
-        //     logoLink : specificData.logoLink,
-        //     interns  : specificData2
-        //   }
+        let reviewFind = await reviewModel.find({bookId: bookId}).select({bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1})
+        console.log(reviewFind)
+         let bookData2 ={
+            data : bookData,
+            reviewsData : reviewFind
+        }
 
-
-        return res.status(200).send({ status: true, message: 'Books list', data: bookData, review: reviewFind })
+        return res.status(200).send({ status: true, message: 'Books list', bookData2  })  //review: reviewFind
 
     } catch (err) {
         return res.status(500).send(err.message)
@@ -215,13 +206,11 @@ const updateBook = async function (req, res) {
             return res.status(404).send({ status: false, msg: "bookId is not present in db" })
         }
 
-        let bookupdate = await bookModel.findOneAndUpdate(
-            { _id: bookId, isDeleted: false },
+        let bookupdate = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false },
             { $set: { title: title, excerpt: excerpt, ISBN: ISBN, releasedAt: releasedAt } },
-            { new: true }
-        );
+            { new: true });
 
-        res.status(200).send({ status: true, message: 'Success', data: bookupdate });
+        return res.status(200).send({ status: true, message: 'Success', data: bookupdate });
 
 
     } catch (error) {
@@ -272,11 +261,3 @@ module.exports.getBookByparam = getBookByparam
 module.exports.updateBook = updateBook
 module.exports.deleteBook = deleteBook
 
-
-
-
-// Create a book document from request body. Get userId in request body only.
-// Make sure the userId is a valid userId by checking the user exist in the users collection.
-// Return HTTP status 201 on a succesful book creation. Also return the book document. The response should be a JSON object like this
-// Create atleast 10 books for each user
-// Return HTTP status 400 for an invalid request with a response body like this
