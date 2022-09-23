@@ -12,21 +12,21 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
-    }, 
+    },
     userId: {
-        type: ObjectId, 
+        type: ObjectId,
         required: true,
         ref: "user",
         trim: true
     },
     ISBN: {
         type: String,
-        require: true, 
+        require: true,
         unique: true,
         trim: true
     },
     category: {
-        type: String, 
+        type: String,
         require: true,
         trim: true
     },
@@ -36,24 +36,24 @@ const bookSchema = new mongoose.Schema({
         trim: true
     },
     reviews: {
-       type: Number, 
-       default: 0,
-       trim: true 
+        type: Number,
+        default: 0,
+        trim: true
     },
     deletedAt: {
         type: Date,
         trim: true
-    }, 
+    },
     isDeleted: {
-        type: Boolean, 
+        type: Boolean,
         default: false
     },
     releasedAt: {
-        type: Date, 
+        type: Date,
         required: true
-       // format("YYYY-MM-DD"), 
-        },
-    
+        // format("YYYY-MM-DD"), 
+    },
+
 }, { timestamps: true });
 
 

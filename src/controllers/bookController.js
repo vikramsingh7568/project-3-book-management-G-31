@@ -69,11 +69,6 @@ const createBooks = async function (req, res) {
             return res.status(400).send({ status: false, msg: ' userId is required' })
         }
 
-        // if(!isValidObjectId(userId)){
-        //     return res.status(400).send({status: false, msg: `${userId} is not valid book Id`})
-        // }
-
-        
 
         let findUserId = await userModel.findById(userId)
         if (!findUserId) {
@@ -102,7 +97,7 @@ const createBooks = async function (req, res) {
         }
 
         let createBookData = await bookModel.create(requestbody)
-            return res.status(201).send({ status: true, msg: "successfully created", data: createBookData })
+        return res.status(201).send({ status: true, msg: "successfully created", data: createBookData })
 
     } catch (error) {
         return res.status(500).send(error.message)
@@ -113,14 +108,24 @@ const createBooks = async function (req, res) {
 
 const getBooks = async function (req, res) {
     try {
-        
-        let requestBody =req.query
-        console.log(requestBody.subcategory)
+
+        let requestBody = req.query
+        if (requestBody.subcategory === "") {
+            return res.status(400).send({ status: false, msg: "please enter a subcategory" })
+        }
+
+        if (requestBody.category === "") {
+            return res.status(400).send({ status: false, msg: "please enter a category" })
+        }
+        if (requestBody.userId === "") {
+            return res.status(400).send({ status: false, msg: "please enter user id" })
+        }
+
         let getBooksDetails = await bookModel.find({ isDeleted: false, ...requestBody }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
 
         if (getBooksDetails.length == 0) {
             return res.status(404).send({ status: false, msg: 'no book found' })
-        }else {
+        } else {
             return res.status(200).send({ status: true, msg: "get data successfully", data: getBooksDetails })
         }
 
@@ -131,7 +136,7 @@ const getBooks = async function (req, res) {
 }
 //--------------------------|| GET BOOKS BY PARAMS ||--------------------------------
 
-const getBookByparam = async function (req, res) {
+const getBookById = async function (req, res) {
     try {
         let bookId = req.params.bookId;
         if (!bookId) {
@@ -142,21 +147,22 @@ const getBookByparam = async function (req, res) {
             return res.status(400).send({ status: false, msg: `${bookId} is not valid book Id` })
         }
 
-        let findbookId = await bookModel.findById(bookId)
+        // let findbookId = await bookModel.findById(bookId)
+        let bookData = await bookModel.findOne({ _id: bookId, isDeleted: false })
 
-        if (!findbookId) {
-            return res.send({ status: false, msg: "book Id is not valid" })
-        }
-        let bookData = await bookModel.findOne({ _id: bookId})
-
-        let reviewFind = await reviewModel.find({bookId: bookId, isDeleted: false}).select({bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1})
-         
-        let bookData2 ={
-            data : bookData,
-            reviewsData: reviewFind
+        if (!bookData) {
+            return res.status(404).send({ status: false, msg: "book Id is not valid" })
         }
 
-        return res.status(200).send({ status: true, message: 'Books list', bookData2}) 
+
+        let reviewFind = await reviewModel.find({ bookId: bookId }).select({ bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
+        console.log(bookData)
+        let result = bookData.toJSON()
+        // let result = bookData._doc
+        result.reviewData = reviewFind
+
+
+        return res.status(200).send({ status: true, message: 'Books list', data: result })
 
     } catch (err) {
         return res.status(500).send(err.message)
@@ -173,10 +179,6 @@ const updateBook = async function (req, res) {
         if (!bookId) {
             return res.status(400).send({ status: false, message: "please provide a bookId in params" })
         };
-
-        // if (!isValidObjectId(bookId)) {
-        //     return res.status(400).send({ status: false, msg: `${bookId} is not valid book Id` })
-        // }
 
         let findbookId = await bookModel.findById(bookId)
         if (!findbookId) {
@@ -229,10 +231,6 @@ const deleteBook = async function (req, res) {
             return res.status(400).send({ status: false, message: "please provide a bookId in params" })
         };
 
-        // if (!isValidObjectId(bookId)) {
-        //     return res.status(400).send({ status: false, msg: `${bookId} is not valid book Id` })
-        // }
-
         let findbookId = await bookModel.findById(bookId)
         if (!findbookId) {
             return res.status(404).send({ status: false, msg: "bookId doesn't exists" })
@@ -255,9 +253,6 @@ const deleteBook = async function (req, res) {
 
 //--------------------------|| EXPORTING MODULE TO ROUTE.JS ||--------------------------------
 
-module.exports.createBooks = createBooks
-module.exports.getBooks = getBooks
-module.exports.getBookByparam = getBookByparam
-module.exports.updateBook = updateBook
-module.exports.deleteBook = deleteBook
+module.exports = { createBooks, getBooks, getBookById, updateBook, deleteBook }
+
 
