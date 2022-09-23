@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+
+
 // ---------------------------|| CONTROLLERS ||--------------------------------
 
 const bookController= require("../controllers/bookController.js")        // BOOK CONTROLLER
@@ -18,7 +20,7 @@ const bookController= require("../controllers/bookController.js")        // BOOK
 
 // ---------------------------|| BOOK ||--------------------------------
 
-router.post("/books",middleware.authentication,middleware.Authorisation,bookController.createBooks)   
+router.post("/books",middleware.authentication,middleware.bookAuthorization,bookController.createBooks)   
 router.get("/books",middleware.authentication,bookController.getBooks)
 router.get("/books/:bookId",middleware.authentication,bookController.getBookByparam )
 router.put("/books/:bookId",middleware.authentication,middleware.Authorisation,bookController.updateBook)

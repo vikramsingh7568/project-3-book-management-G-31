@@ -33,10 +33,13 @@ const createReview = async function(req,res){
             if (!params) {
                 return res.status(400).send({ status: false, message: "please provide a bookId in params" })
             };
-    
+
             if(!isValidObjectId(params)){
                 return res.status(400).send({status: false, msg: `${params} is not valid book Id`})
             }
+    
+            
+            
     
             let findbookId = await bookModel.findById(params)
             
@@ -55,6 +58,11 @@ const createReview = async function(req,res){
             if (!isValid(bookId)) {
                 return res.status(400).send({ status: false, msg: ' bookId is required' })
             }
+
+            if(!isValidObjectId(bookId)){
+                return res.status(400).send({status: false, msg: `${params} is not valid book Id`})
+            }
+
     
             if (!isValid(reviewedAt)) {
                 return res.status(400).send({ status: false, msg: ' reviewedAt is required' })
@@ -107,10 +115,17 @@ const updateReview = async function(req,res){
             return res.status(400).send({status: false, msg: `${reviewId} is not valid review Id`})
         }
         
-        let findreviewId = await reviewModel.findById({ _id: reviewId, isDeleted:false})
-        if(!findreviewId) {
-            return res.status(404).send({status: false, msg: "reviewId doesn't exists"})
+        let findreviewId = await reviewModel.findById({ _id: reviewId})
+
+        if(!findreviewId){
+            return res.status(404).send({status: false, msg: "review Id doesn't exist"})        
+        }   
+
+        if(findreviewId.isDeleted == true) {
+            return res.status(404).send({status: false, msg: "this review id is deleted you can not update it"})
         }
+
+        
         
         let updatereviewdata = req.body;
 
@@ -118,7 +133,7 @@ const updateReview = async function(req,res){
 
         if(!isVAlidRequestBody(updatereviewdata)){
             return res.status(400).send({status: false, msg: "please input review Details"})
-        };
+        }
 
         let reviewupdate = await reviewModel.findOneAndUpdate({ bookId:bookId, _id: reviewId, isDeleted:false },
             { $set: { reviews, rating, reviewedBy} },{ new: true });
@@ -159,9 +174,9 @@ const deleteReview = async function(req,res){
             return res.status(400).send({status: false, msg: `${reviewIdparam} is not valid review Id`})
         }
         
-        let findreviewId = await reviewModel.findById({ _id: reviewIdparam, isDeleted:false})
-        if(!findreviewId) {
-            return res.status(404).send({status: false, msg: "reviewId doesn't exists"})
+        let findreviewId = await reviewModel.findById({ _id: reviewIdparam})
+        if(findreviewId.isDeleted == true) {
+            return res.status(404).send({status: false, msg: "already deleted"})
         }
 
         let deletedReview = await reviewModel.findByIdAndUpdate({ bookId:bookIdparam, _id: reviewIdparam, isDeleted:false },
