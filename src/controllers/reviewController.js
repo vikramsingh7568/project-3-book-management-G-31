@@ -131,6 +131,15 @@ const updateReview = async function (req, res) {
 
         let { reviews, rating, reviewedBy } = updatereviewdata;
 
+        if(rating){
+            if(typeof(rating) == "string"){
+                return res.status(400).send({status : false , msg : "use only numbers in rating"})
+            }
+        }
+        if (rating < 1 || rating > 5) {
+            return res.status(400).send({ status: false, msg: "rating should be between 1 to 5" })
+        }
+
         if (!isVAlidRequestBody(updatereviewdata)) {
             return res.status(400).send({ status: false, msg: "please input review Details" })
         }
