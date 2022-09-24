@@ -71,6 +71,12 @@ const createReview = async function (req, res) {
         if (!isValid(rating)) {
             return res.status(400).send({ status: false, msg: ' rating is required' })
         }
+        
+        if(rating){
+            if(typeof(rating) == "string"){
+                return res.status(400).send({status : false , msg : "use only numbers in rating"})
+            }
+        }
 
         if (rating < 1 || rating > 5) {
             return res.status(400).send({ status: false, msg: "rating should be between 1 to 5" })
@@ -79,7 +85,7 @@ const createReview = async function (req, res) {
         let createReview = await reviewModel.create(requestBody)
 
         await bookModel.findOneAndUpdate({ _id: params }, { $inc: { reviews: 1 } }, { new: true })
-        return res.status(200).send({ status: true, message: "success", createReview });
+        return res.status(201).send({ status: true, message: "success", createReview });
 
     } catch (error) {
         return res.status(500).send({ status: false, msg: "error", error: error.message })

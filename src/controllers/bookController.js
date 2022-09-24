@@ -32,9 +32,13 @@ const createBooks = async function (req, res) {
             return res.status(400).send({ status: false, msg: "please input Book Details" })
         }
 
-        const { title, excerpt, userId, ISBN, category, subcategory, isDeleted } = requestbody
-        let releasedAt = requestbody.releasedAt
-        releasedAt = moment(new Date()).format("YYYY" - "MM" - "DD")
+        const { title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt } = requestbody
+        let releasedat = requestbody.releasedAt
+        releasedat = moment(new Date()).format("YYYY" - "MM" - "DD")
+
+        if (!isValid(ISBN)) {
+            return res.status(400).send({ status: false, msg: ' ISBN is required' })
+        }
 
         let IsbnNumber = /^[7-9][0-9]+$/.test(ISBN)
         if (IsbnNumber == false) {
@@ -63,10 +67,6 @@ const createBooks = async function (req, res) {
 
         if (!isValid(excerpt)) {
             return res.status(400).send({ status: false, msg: ' excerpt is required' })
-        }
-
-        if (!isValid(userId)) {
-            return res.status(400).send({ status: false, msg: ' userId is required' })
         }
 
 
@@ -121,7 +121,7 @@ const getBooks = async function (req, res) {
             return res.status(400).send({ status: false, msg: "please enter user id" })
         }
 
-        let getBooksDetails = await bookModel.find({ isDeleted: false, ...requestBody }).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
+        let getBooksDetails = await bookModel.find({ isDeleted: false, ...requestBody }).sort({title: 1}).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
 
         if (getBooksDetails.length == 0) {
             return res.status(404).send({ status: false, msg: 'no book found' })
@@ -155,7 +155,7 @@ const getBookById = async function (req, res) {
         }
 
 
-        let reviewFind = await reviewModel.find({ bookId: bookId }).select({ bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
+        let reviewFind = await reviewModel.find({ bookId: bookId, isDeleted:false }).select({ bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
         console.log(bookData)
         let result = bookData.toJSON()
         // let result = bookData._doc

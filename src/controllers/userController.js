@@ -9,7 +9,7 @@ const isValid = function (value) {
 }
 
 const isVAlidRequestBody = function (requestBody) {
-    return Object.keys(requestBody).length > 0
+    return Object.keys(requestBody).length > 0 
 }
 
 
@@ -100,14 +100,18 @@ const createUser = async function (req, res) {
 const loginUser = async function (req, res) {
     try {
 
-        let { email, password } = req.body
+        let { email, password } = req.body  
+
+        if (!isVAlidRequestBody(req.body)) {
+            return res.status(400).send({ status: false, msg: "please input email and password" })
+        }
 
         if (!email) {
             return res.status(400).send({
                 status: false, message: "EmailId is mandatory"
             })
         }
-
+        
         // Password is mandatory
 
         if (!password) {
@@ -115,10 +119,9 @@ const loginUser = async function (req, res) {
                 status: false, message: "Password is mandatory"
             })
         }
-
-
+        
         let DataChecking = await userModel.findOne({ email: email, password: password })
-        if (DataChecking.length == 0) {
+        if (!DataChecking) {
             return res.status(404).send({ msg: "Please enter valid email or password" })
         }
 
