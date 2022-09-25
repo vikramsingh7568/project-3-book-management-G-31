@@ -34,8 +34,11 @@ const createBooks = async function (req, res) {
 
         const { title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt } = requestbody
         let releasedat = requestbody.releasedAt
-        releasedat = moment(new Date()).format("YYYY" - "MM" - "DD")
-
+      releasedat = moment(new Date()).format("YYYY" - "MM" - "DD")
+     
+      if (isNaN(Date.parse(releasedAt))) {
+            return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
+        }
         if (!isValid(ISBN)) {
             return res.status(400).send({ status: false, msg: ' ISBN is required' })
         }
@@ -188,6 +191,14 @@ const updateBook = async function (req, res) {
         let updatedata = req.body;
 
         let { title, excerpt, ISBN, releasedAt } = updatedata;
+  
+       if(releasedAt){
+        if (isNaN(Date.parse(releasedAt))) {
+            return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
+        }
+       }
+
+
 
         if (!isVAlidRequestBody(updatedata)) {
             return res.status(400).send({ status: false, msg: "please input Book Details" })

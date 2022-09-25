@@ -55,6 +55,12 @@ const createReview = async function (req, res) {
 
         const { bookId, reviewedAt, rating } = requestBody
 
+        if(releasedAt){
+            if (isNaN(Date.parse(releasedAt))) {
+                return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
+            }
+           }
+
         if (!isValid(bookId)) {
             return res.status(400).send({ status: false, msg: ' bookId is required' })
         }
@@ -136,6 +142,12 @@ const updateReview = async function (req, res) {
         let updatereviewdata = req.body;
 
         let { reviews, rating, reviewedBy } = updatereviewdata;
+
+        if(releasedAt){
+            if (isNaN(Date.parse(releasedAt))) {
+                return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
+            }
+           }
 
         if(rating){
             if(typeof(rating) == "string"){
