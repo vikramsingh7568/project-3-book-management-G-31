@@ -179,7 +179,7 @@ const deleteReview = async function (req, res) {
     try {
 
         let bookIdparam = req.params.bookId
-        let reviewIdparam = req.params.reviewId
+       
         if (!bookIdparam) {
             return res.status(400).send({ status: false, message: "please provide a bookId in params" })
         };
@@ -193,6 +193,8 @@ const deleteReview = async function (req, res) {
             return res.status(404).send({ status: false, msg: "bookId doesn't exists" })
         }
 
+        let reviewIdparam = req.params.reviewId
+
         if (!reviewIdparam) {
             return res.status(400).send({ status: false, message: "please provide a reviewId in params" })
         };
@@ -201,8 +203,13 @@ const deleteReview = async function (req, res) {
             return res.status(400).send({ status: false, msg: `${reviewIdparam} is not valid review Id` })
         }
 
-        let findreviewId = await reviewModel.findById({ _id: reviewIdparam })
-        if (findreviewId.isDeleted == true) {
+        let findReviewId = await reviewModel.findById({ _id: reviewIdparam, isDeleted: false })
+        if (!findReviewId) {
+            return res.status(404).send({ status: false, msg: "reviewId doesn't exists" })
+        }
+
+        let checkingDeletedReview = await reviewModel.findById({ _id: reviewIdparam})
+        if (checkingDeletedReview.isDeleted == true) {
             return res.status(404).send({ status: false, msg: "already deleted" })
         }
 

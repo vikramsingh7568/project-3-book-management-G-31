@@ -9,7 +9,7 @@ const bookController = require("../controllers/bookController.js")        // BOO
 const reviewController = require("../controllers/reviewController.js")    // REVIEW CONTROLLER
 const userController = require("../controllers/userController.js")        // USER CONTROLLER
 
-//----------------------------|| middleware ||-------------------------
+//----------------------------|| MIDDLEWARE ||-------------------------
 
 const middleware = require("../middleware/middleware.js")
 
@@ -26,15 +26,14 @@ router.get("/books/:bookId", middleware.authentication, bookController.getBookBy
 router.put("/books/:bookId", middleware.authentication, middleware.Authorisation, bookController.updateBook)
 router.delete("/books/:bookId", middleware.authentication, middleware.Authorisation, bookController.deleteBook)
 
-// ------------------ ---------|| REVIEW ||--------------------------------
+// ----------------------------|| REVIEW ||--------------------------------
 
 router.post("/books/:bookId/review", reviewController.createReview)
 router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
 router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
-// -----------------------------------------------------------------------
+// ----------------------------|| ROUTER VALIDATION ||--------------------------------
   
-
 router.all("/*", function (req, res) {
     res.status(400).send({
         status: false,
