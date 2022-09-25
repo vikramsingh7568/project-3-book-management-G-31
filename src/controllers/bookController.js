@@ -95,6 +95,7 @@ const createBooks = async function (req, res) {
         if (!isValid(releasedAt)) {
             return res.status(400).send({ status: false, msg: ' releasedAt is required' })
         }
+        
 
         let createBookData = await bookModel.create(requestbody)
         return res.status(201).send({ status: true, msg: "successfully created", data: createBookData })

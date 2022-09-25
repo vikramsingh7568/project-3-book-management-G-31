@@ -4,8 +4,7 @@ const userModel = require('../models/userModel');
 const mongoose = require('mongoose')
 
 
-
-//AUTHENTICATION
+//--------------------------|| AUTHENTICATION ||--------------------------------
 
 const authentication = async function (req, res, next) {
     try {
@@ -24,7 +23,8 @@ const authentication = async function (req, res, next) {
     }
 }
 
-//---------Authorisation----------------------------------------------------------------------------
+//--------------------------|| AUTHORIZATION ||--------------------------------
+
 
 const Authorisation = async function (req, res, next) {
     try {
@@ -51,7 +51,7 @@ const Authorisation = async function (req, res, next) {
 }
 
 
-// -----------------------------------------------------------------------------
+//--------------------------|| AUTHORIZATION FOR CREATE BOOK ||--------------------------------
 
 const bookAuthorization = async function (req, res, next) {
     try {
