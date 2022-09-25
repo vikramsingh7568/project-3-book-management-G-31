@@ -88,7 +88,7 @@ const createUser = async function (req, res) {
         } else {
             return res.status(400).send({ status: false, msg: ' title is only contain Mr, Mrs, Miss' })
         }
-
+ 
     } catch (error) {
         return res.status(500).send({ status: false, msg: "error", error: error.message })
     }
