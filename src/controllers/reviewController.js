@@ -55,11 +55,13 @@ const createReview = async function (req, res) {
 
         const { bookId, reviewedAt, rating } = requestBody
 
-        if(releasedAt){
-            if (isNaN(Date.parse(releasedAt))) {
-                return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
+        const dateFormate = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/
+  
+        if(reviewedAt){  
+            if (!reviewedAt.match(dateFormate)) {
+                return res.status(400).send({ status: false, msg: "Invalid format of date :- YYYY-MM-DD" })
             }
-           }
+            }
 
         if (!isValid(bookId)) {
             return res.status(400).send({ status: false, msg: ' bookId is required' })
@@ -90,8 +92,13 @@ const createReview = async function (req, res) {
 
         let createReview = await reviewModel.create(requestBody)
 
-        await bookModel.findOneAndUpdate({ _id: params }, { $inc: { reviews: 1 } }, { new: true })
-        return res.status(201).send({ status: true, message: "success", createReview });
+      let updatedReviewCount = await bookModel.findOneAndUpdate({ _id: params }, { $inc: { reviews: 1 } }, { new: true })
+      let result = updatedReviewCount.toJSON()
+      // let result = bookData._doc
+      result.Review = createReview
+      
+
+      return res.status(200).send({ status: true, message: 'Books list', data: result})
 
     } catch (error) {
         return res.status(500).send({ status: false, msg: "error", error: error.message })
@@ -141,13 +148,15 @@ const updateReview = async function (req, res) {
 
         let updatereviewdata = req.body;
 
-        let { reviews, rating, reviewedBy } = updatereviewdata;
+        let { reviews, rating, reviewedBy,reviewedAt } = updatereviewdata;
 
-        if(releasedAt){
-            if (isNaN(Date.parse(releasedAt))) {
-                return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
-            }
-           }
+        const dateFormate = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/
+
+        if(reviewedAt){  
+        if (!reviewedAt.match(dateFormate)) {
+            return res.status(400).send({ status: false, msg: "Invalid format of date :- YYYY-MM-DD" })
+        }
+        }
 
         if(rating){
             if(typeof(rating) == "string"){
@@ -165,7 +174,12 @@ const updateReview = async function (req, res) {
         let reviewupdate = await reviewModel.findOneAndUpdate({ bookId: bookId, _id: reviewId, isDeleted: false },
             { $set: { reviews, rating, reviewedBy } }, { new: true });
 
-        res.status(200).send({ status: true, message: 'Success', data: reviewupdate });
+        let result = findbookId.toJSON()
+        // let result = bookData._doc
+        result.Review = reviewupdate
+      
+
+        return res.status(200).send({ status: true, message: 'Success', data: result})
 
 
     } catch (error) {
