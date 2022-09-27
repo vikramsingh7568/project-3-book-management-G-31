@@ -33,12 +33,9 @@ const createBooks = async function (req, res) {
         }
 
         const { title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt } = requestbody
-        let releasedat = requestbody.releasedAt
-      releasedat = moment(new Date()).format("YYYY" - "MM" - "DD")
-     
-      if (isNaN(Date.parse(releasedAt))) {
-            return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
-        }
+
+        const dateFormate = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/
+
         if (!isValid(ISBN)) {
             return res.status(400).send({ status: false, msg: ' ISBN is required' })
         }
@@ -97,6 +94,10 @@ const createBooks = async function (req, res) {
 
         if (!isValid(releasedAt)) {
             return res.status(400).send({ status: false, msg: ' releasedAt is required' })
+        }
+
+        if (!releasedAt.match(dateFormate)) {
+            return res.status(400).send({ status: false, msg: "Invalid format of date :- YYYY-MM-DD" })
         }
         
 
@@ -160,7 +161,6 @@ const getBookById = async function (req, res) {
 
 
         let reviewFind = await reviewModel.find({ bookId: bookId, isDeleted:false }).select({ bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
-        console.log(bookData)
         let result = bookData.toJSON()
         // let result = bookData._doc
         result.reviewData = reviewFind
@@ -192,14 +192,14 @@ const updateBook = async function (req, res) {
         let updatedata = req.body;
 
         let { title, excerpt, ISBN, releasedAt } = updatedata;
+
+        const dateFormate = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/
   
-       if(releasedAt){
-        if (isNaN(Date.parse(releasedAt))) {
-            return res.status(400).send({status : false , msg : "please enter valid date for example = 2022-01-02"})
-        }
-       }
-
-
+        if(releasedAt){  
+            if (!releasedAt.match(dateFormate)) {
+                return res.status(400).send({ status: false, msg: "Invalid format of date :- YYYY-MM-DD" })
+            }
+            }
 
         if (!isVAlidRequestBody(updatedata)) {
             return res.status(400).send({ status: false, msg: "please input Book Details" })
